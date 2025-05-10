@@ -1,0 +1,22 @@
+# Exclude sensitive files
+gremlin-team-secret.yaml
+gremlin-team-secret-template.yaml
+vars.yml
+
+# Exclude virtual environment
+venv/
+
+# Exclude git files
+.git/
+.gitignore
+
+# Exclude markdown and documentation
+*.md
+*.log
+
+# Exclude temporary files
+*.pyc
+__pycache__/
+
+
+failure-flags-sidecar
