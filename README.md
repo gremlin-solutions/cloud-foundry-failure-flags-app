@@ -1,30 +1,30 @@
 # Deploying a Flask App with Failure Flags Sidecar on Cloud Foundry
 
-## 1. Download and Extract the Failure Flags Sidecar
+## Step 1: Download and Extract the Failure Flags Sidecar
 
-Download and extract the Failure Flags sidecar for your CPU architecture. Choose **amd64** (x86_64) or **arm64**:
+Choose the appropriate architecture (**amd64** or **arm64**) and run the command below in your project's root directory:
 
 ```bash
-# ── For x86_64 (amd64) ─────────────────────────────────────────────────────────
+# For x86_64 (amd64)
 curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/x86_64/failure-flags-sidecar-linux.tar.gz \
-  | tar xz \
-      --strip-components=2 \
-      -C . \
-      ./bin/failure-flags-sidecar-amd64-linux
+  | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-amd64-linux
 
-# ── For ARM64 ─────────────────────────────────────────────────────────────────
+# For ARM64
 curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/arm64/failure-flags-sidecar-linux.tar.gz \
-  | tar xz \
-      --strip-components=2 \
-      -C . \
-      ./bin/failure-flags-sidecar-arm64-linux
+  | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-arm64-linux
 ```
 
-## 2. Create `vars.yml`
+Ensure your sidecar executable is in the bin/ directory:
 
-The `manifest.yml` uses `(( placeholder ))` syntax to inject secrets, you need to create a `vars.yml` file locally. This file **should not** be committed to source control, as it contains sensitive information.
+```
+bin/failure-flags-sidecar-amd64-linux
+# OR
+bin/failure-flags-sidecar-arm64-linux
+```
 
-Below is an example of what `vars.yml` could look like:
+## Step 2: Create `vars.yml`
+
+Your `manifest.yml` references secrets using `((placeholder))` syntax. Create a local `vars.yml` file (do not commit to Git):
 
 ```yaml
 aws_access_key_id: "YOUR_ACCESS_KEY_ID"
@@ -41,31 +41,25 @@ gremlin_team_private_key: |-
   -----END EC PRIVATE KEY-----
 ```
 
-1. **Create** a file named `vars.yml` in the same directory as your `manifest.yml`.
-2. **Replace** the placeholder values (`YOUR_ACCESS_KEY_ID`, `YOUR_SECRET_ACCESS_KEY`, etc.) with your real credentials.
-3. **Do not** commit `vars.yml` to your git repository. It’s recommended to add `vars.yml` to `.gitignore`.
+* Replace placeholders with actual credentials.
+* Add `vars.yml` to your `.gitignore` file to prevent accidental commits.
 
-## 3. Configure `manifest.yml`
+## Step 3: Configure `manifest.yml`
 
-Below is an example `manifest.yml` for deploying your Flask app with the Python buildpack, plus the Gremlin sidecar. Adjust memory, paths, and environment variables as needed:
+Here's an example Cloud Foundry manifest for your Flask application with a Gremlin sidecar:
 
 ```yaml
 ---
 applications:
-  - name: s3-failure-flags-app            # App name in CF
-    memory: 512M                          # Memory for the container
-    disk_quota: 1G                        # Disk space for the container
-    instances: 1                          # Number of instances
-
+  - name: s3-failure-flags-app
+    memory: 512M
+    disk_quota: 1G
+    instances: 1
     buildpacks:
-      - python_buildpack                  # Use Python buildpack for Flask
-
-    path: .                               # Push contents of current directory
-
-    command: null                         # Let the buildpack detect and use your Procfile
-
+      - python_buildpack
+    path: .
     env:
-      S3_BUCKET: "commoncrawl"            # Custom environment variables
+      S3_BUCKET: "commoncrawl"
       DEBUG_MODE: "false"
       CLOUD: "pcf"
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
@@ -77,26 +71,27 @@ applications:
       GREMLIN_TEAM_PRIVATE_KEY: ((gremlin_team_private_key))
       GREMLIN_DEBUG: "true"
       SERVICE_NAME: "s3-failure-flags-app"
-
     sidecars:
       - name: gremlin-sidecar
-        process_types: ["web"]            # Attach sidecar to 'web' process
+        process_types: ["web"]
         memory: 256M
         disk_quota: 256M
-        command: "./failure-flags-sidecar"  # Run Gremlin sidecar
+        command: "./bin/failure-flags-sidecar-amd64-linux" # or arm64 binary
 ```
 
-## 4. Push to Cloud Foundry
+Adjust paths, environment variables, and resource limits as necessary.
 
-From your project directory:
+## Step 4: Push Application to Cloud Foundry
+
+From your project directory, deploy the application:
+
 ```bash
 cf push --vars-file vars.yml
 ```
 
-- The Python buildpack installs dependencies (from `requirements.txt`: `flask`, `boto3`, `requests`, `failureflags`).
-- Both the Flask app and the Gremlin sidecar run in the same container, allowing local communication (`localhost:5032`).
+## References
 
-## Reference
+* [Deploying Failure Flags on Pivotal Cloud Foundry (PCF)](https://www.gremlin.com/docs/deploying-failure-flags-on-pivotal-cloud-foundry-pcf)
+* [Cloud Foundry Sidecar Processes](https://docs.cloudfoundry.org/devguide/sidecars.html)
+* [Manifest Sidecar Attribute Reference](https://docs.cloudfoundry.org/devguide/deploy-apps/manifest-attributes.html#sidecars)
 
-- [Pushing apps with sidecar processes](https://docs.cloudfoundry.org/devguide/sidecars.html)
-- [Attribute Reference - sidecars](https://docs.cloudfoundry.org/devguide/deploy-apps/manifest-attributes.html#sidecars)
