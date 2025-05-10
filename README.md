@@ -1,32 +1,25 @@
-# Deploying a Flask App and the Gremlin Sidecar on Cloud Foundry
+# Deploying a Flask App and the Gremlin Failure Flags Sidecar on Cloud Foundry
 
-## 1. Download and Extract the Gremlin Sidecar Binary
+## 1. Download and Extract the Failure Flags Sidecar
 
-1. **Pull** the sidecar image (adjust for your architecture if necessary):
-   ```bash
-   # Default (pulls the appropriate image for your platform if available)
-   docker pull gremlin/failure-flags-sidecar:latest
+Download and extract the Failure Flags sidecar for your CPU architecture. Choose **amd64** (x86_64) or **arm64**:
 
-   # Alternatively, specify architecture:
-   docker pull --platform=linux/amd64 gremlin/failure-flags-sidecar:latest
-   docker pull --platform=linux/arm64 gremlin/failure-flags-sidecar:latest
-   ```
+```bash
+# ── For x86_64 (amd64) ─────────────────────────────────────────────────────────
+curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/x86_64/failure-flags-sidecar-linux.tar.gz \
+  | tar xz \
+      --strip-components=2 \
+      -C . \
+      ./bin/failure-flags-sidecar-amd64-linux
 
-2. **Create** a temporary container:
-   ```bash
-   docker create --name failure-flags-extract gremlin/failure-flags-sidecar:latest
-   ```
+# ── For ARM64 ─────────────────────────────────────────────────────────────────
+curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/arm64/failure-flags-sidecar-linux.tar.gz \
+  | tar xz \
+      --strip-components=2 \
+      -C . \
+      ./bin/failure-flags-sidecar-arm64-linux
+```
 
-3. **Copy** the sidecar binary from the container:
-   ```bash
-   docker cp failure-flags-extract:/failure-flags-sidecar failure-flags-sidecar
-   ```
-
-4. **Remove** the container and **make the binary executable**:
-   ```bash
-   docker rm failure-flags-extract
-   chmod +x failure-flags-sidecar
-   ```
 ## 2. Create `vars.yml`
 
 The `manifest.yml` uses `(( placeholder ))` syntax to inject secrets, you need to create a `vars.yml` file locally. This file **should not** be committed to source control, as it contains sensitive information.

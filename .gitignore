@@ -161,6 +161,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-gremlin-team-secret.yaml
 vars.yml
 failure-flags-sidecar
+failure-flags-sidecar-amd64-linux
+bin/failure-flags-sidecar-amd64-linux
