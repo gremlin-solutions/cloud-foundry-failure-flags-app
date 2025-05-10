@@ -1,4 +1,4 @@
-# Deploying a Flask App and the Gremlin Failure Flags Sidecar on Cloud Foundry
+# Deploying a Flask App with Failure Flags Sidecar on Cloud Foundry
 
 ## 1. Download and Extract the Failure Flags Sidecar
 

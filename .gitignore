@@ -162,6 +162,5 @@ cython_debug/
 #.idea/
 
 vars.yml
-failure-flags-sidecar
 failure-flags-sidecar-amd64-linux
-bin/failure-flags-sidecar-amd64-linux
+failure-flags-sidecar-arm64-linux
