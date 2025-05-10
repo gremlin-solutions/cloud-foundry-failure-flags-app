@@ -31,4 +31,4 @@ applications:
         process_types: ["web"]            # Attach sidecar to 'web' process
         memory: 256M
         disk_quota: 256M
-        command: "./failure-flags-sidecar"  # Run Gremlin sidecar
+        command: "./failure-flags-sidecar-amd64-linux"  # Run Gremlin sidecar
