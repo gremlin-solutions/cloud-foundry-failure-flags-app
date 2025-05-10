@@ -16,7 +16,7 @@ curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/arm64
   | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-arm64-linux
 ```
 
-Ensure your sidecar executable is in the bin/ directory:
+Ensure your sidecar executable is in the `bin/` directory:
 
 ```
 bin/failure-flags-sidecar-amd64-linux
@@ -90,6 +90,42 @@ From your project directory, deploy the application:
 ```bash
 cf push --vars-file vars.yml
 ```
+
+## Step 5: Validate the Cloud Foundry App
+
+Check the status of your deployed application:
+
+```bash
+cf apps
+```
+
+To see detailed health and status information:
+
+```bash
+cf app s3-failure-flags-app
+```
+
+Ensure that your application status is "running" and that the number of instances matches your manifest configuration.
+
+## Step 6: Inspect Application Logs
+
+### Tail Logs Continuously
+
+Tail logs to monitor application runtime behavior in real-time:
+
+```bash
+cf logs s3-failure-flags-app
+```
+
+### View Recent Logs
+
+Retrieve recent logs for quick inspection:
+
+```bash
+cf logs s3-failure-flags-app --recent
+```
+
+Check logs regularly to confirm your app and Gremlin sidecar are working correctly.
 
 ## References
 
