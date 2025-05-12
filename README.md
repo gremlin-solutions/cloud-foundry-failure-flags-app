@@ -5,13 +5,15 @@
 Choose the appropriate architecture (**amd64** or **arm64**) and run the command below in your project's root directory:
 
 ```bash
-mkdir -p bin
-
 # For x86_64 (amd64)
+mkdir -p bin
 curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/x86_64/failure-flags-sidecar-linux.tar.gz \
   | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-amd64-linux
+```
 
+```
 # For ARM64
+mkdir -p bin
 curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/arm64/failure-flags-sidecar-linux.tar.gz \
   | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-arm64-linux
 ```
