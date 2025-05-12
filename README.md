@@ -10,7 +10,7 @@ mkdir -p bin
 curl -sSL https://assets.gremlin.com/packages/failure-flags-sidecar/latest/x86_64/failure-flags-sidecar-linux.tar.gz \
   | tar xz --strip-components=2 -C ./bin ./bin/failure-flags-sidecar-amd64-linux
 ```
-
+OR
 ```
 # For ARM64
 mkdir -p bin
